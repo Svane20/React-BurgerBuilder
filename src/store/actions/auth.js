@@ -16,7 +16,7 @@ export const authSuccess = (token, userId) => {
   };
 };
 
-export const authFail = (error) => {
+export const authFail = error => {
   return {
     type: actionTypes.AUTH_FAIL,
     error: error,
@@ -32,8 +32,8 @@ export const logout = () => {
   };
 };
 
-export const checkAuthTimeout = (expirationTime) => {
-  return (dispatch) => {
+export const checkAuthTimeout = expirationTime => {
+  return dispatch => {
     setTimeout(() => {
       dispatch(logout());
     }, expirationTime * 1000);
@@ -41,7 +41,7 @@ export const checkAuthTimeout = (expirationTime) => {
 };
 
 export const auth = (email, password, isSignup) => {
-  return (dispatch) => {
+  return dispatch => {
     dispatch(authStart());
     const authData = {
       email: email,
@@ -54,7 +54,7 @@ export const auth = (email, password, isSignup) => {
     }
     axios
       .post(url, authData)
-      .then((response) => {
+      .then(response => {
         const expirationDate = new Date(
           new Date().getTime() + response.data.expiresIn * 1000
         );
@@ -64,13 +64,13 @@ export const auth = (email, password, isSignup) => {
         dispatch(authSuccess(response.data.idToken, response.data.localId));
         dispatch(checkAuthTimeout(response.data.expiresIn));
       })
-      .catch((err) => {
+      .catch(err => {
         dispatch(authFail(err.response.data.error));
       });
   };
 };
 
-export const setAuthRedirectpath = (path) => {
+export const setAuthRedirectPath = path => {
   return {
     type: actionTypes.SET_AUTH_REDIRECT_PATH,
     path: path,
@@ -78,7 +78,7 @@ export const setAuthRedirectpath = (path) => {
 };
 
 export const authCheckState = () => {
-  return (dispatch) => {
+  return dispatch => {
     const token = localStorage.getItem('token');
     if (!token) {
       dispatch(logout());
